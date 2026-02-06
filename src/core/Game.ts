@@ -58,34 +58,23 @@ export class Game {
     private async handleGameOver(reason: string) {
         this.isRunning = false;
         const score = Math.floor(this.world.getDistance() * 0.01);
-        console.log(`GameOver! Reason: ${reason}, Score: ${score}`);
 
         const ui = UIManager.getInstance();
         const playerName = await ui.showNamePrompt(reason);
-        console.log(`Name submitted: ${playerName}`);
 
         if (playerName) {
-            console.log("Submitting score to Firebase...");
             await submitScore(playerName, score);
-            console.log("Score submitted!");
         }
 
-        console.log("Fetching latest rankings...");
         try {
-            // Add a timeout just in case Firebase hangs
-            const rankingPromise = getTopRankings();
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Firebase Timeout")), 5000));
-
-            const latestRankings = await Promise.race([rankingPromise, timeoutPromise]) as any[];
-            console.log("Rankings fetched!", latestRankings);
+            const latestRankings = await getTopRankings();
             await ui.showRankingBoard(latestRankings);
         } catch (error) {
-            console.error("Failed to show ranking board:", error);
-            // Show an alert or something if it fails
-            alert("ランキングの取得に失敗したよ... Titleに戻るね！");
+            console.error("Ranking fetch failed:", error);
+            // Fallback: show empty board if fetch fails completely
+            await ui.showRankingBoard([]);
         }
 
-        console.log("Reloading for Next Run...");
         location.reload();
     }
 
