@@ -100,8 +100,26 @@ export class Game {
         this.ctx.fillStyle = '#ffffff';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        this.ctx.save();
+
+        // Zoom out for better visibility (0.75 scale)
+        // Center the scaling or keep it simple? 
+        // Let's scale from (0, height) or just (0,0)? 
+        // Scaling from (0,0) is easiest for coordinate math.
+        const zoom = 0.75;
+        this.ctx.scale(zoom, zoom);
+
+        // Adjust translation so the scene remains at the bottom? 
+        // If we scale by 0.75, we should translate up a bit if we want the bottom to stay bottom.
+        // But since the world is generated based on canvasHeight, maybe just scaling is enough.
+        // Actually, let's translate to keep the bottom aligned.
+        const yOffset = (this.canvas.height * (1 - zoom)) / zoom;
+        this.ctx.translate(0, yOffset);
+
         this.world.render(this.ctx);
         this.player.render(this.ctx);
+
+        this.ctx.restore();
 
         this.renderUI();
     }
