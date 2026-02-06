@@ -22,12 +22,6 @@ export class Player {
 
         this.jumpSprite = new Image();
         this.jumpSprite.src = '/player_jump.png';
-
-        window.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.jump();
-        }, { passive: false });
-        window.addEventListener('mousedown', () => this.jump());
     }
 
     public onResize(_w: number, _h: number) { }

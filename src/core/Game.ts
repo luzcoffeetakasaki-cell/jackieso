@@ -17,6 +17,26 @@ export class Game {
         this.ctx = canvas.getContext('2d')!;
         this.player = new Player();
         this.world = new World();
+
+        this.initInput();
+    }
+
+    private initInput() {
+        // Pointer down handles both mouse clicks and touch taps on the canvas
+        this.canvas.addEventListener('pointerdown', (e) => {
+            if (!this.isRunning) return;
+            e.preventDefault();
+            this.player.jump();
+        });
+
+        // Keyboard support
+        window.addEventListener('keydown', (e) => {
+            if (!this.isRunning) return;
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+                e.preventDefault();
+                this.player.jump();
+            }
+        });
     }
 
     public resize() {
