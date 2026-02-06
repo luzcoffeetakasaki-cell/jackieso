@@ -1,6 +1,6 @@
 import { Player } from '../entities/Player';
 import { World } from '../world/World';
-import { submitScore, getTopRankings, RankingEntry } from './Firebase';
+import { submitScore, getTopRankings, type RankingEntry } from './Firebase';
 
 export class Game {
     private ctx: CanvasRenderingContext2D;
@@ -11,8 +11,11 @@ export class Game {
     private rankings: RankingEntry[] = [];
     private showRankings: boolean = false;
 
-    constructor(private canvas: HTMLCanvasElement) {
+    private canvas: HTMLCanvasElement;
+
+    constructor(canvas: HTMLCanvasElement) {
         console.log('Game initialized');
+        this.canvas = canvas;
         this.ctx = canvas.getContext('2d')!;
         this.player = new Player();
         this.world = new World();
