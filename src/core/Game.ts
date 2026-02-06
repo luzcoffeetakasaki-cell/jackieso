@@ -102,11 +102,11 @@ export class Game {
 
         this.ctx.save();
 
-        // Zoom out for better visibility (0.75 scale)
+        // Zoom out for better visibility (0.4 scale - Extreme wide view)
         // Center the scaling or keep it simple? 
         // Let's scale from (0, height) or just (0,0)? 
         // Scaling from (0,0) is easiest for coordinate math.
-        const zoom = 0.75;
+        const zoom = 0.4;
         this.ctx.scale(zoom, zoom);
 
         // Adjust translation so the scene remains at the bottom? 
