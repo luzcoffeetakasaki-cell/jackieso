@@ -69,7 +69,10 @@ export class Game {
         this.isRunning = false;
         const score = Math.floor(this.world.getDistance() * 0.01);
 
-        const playerName = prompt(`${reason}\nScore: ${score}m\nお名前を教えて！`, "おじさん");
+        // Use custom UI instead of prompt
+        const ui = UIManager.getInstance();
+        const playerName = await ui.showNamePrompt(reason);
+
         if (playerName) {
             await submitScore(playerName, score);
         }
@@ -77,11 +80,11 @@ export class Game {
         // Refresh and show final rankings before reload
         this.rankings = await getTopRankings();
         this.showRankings = true;
-        this.render(); // Final render with ranking overlay
+        this.render();
 
         setTimeout(() => {
             location.reload();
-        }, 3000);
+        }, 5000); // Wait a bit longer to see the rankings
     }
 
     private render() {

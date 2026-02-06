@@ -10,7 +10,8 @@ export class UIManager {
         this.overlay.className = 'popup-overlay hidden';
         this.overlay.innerHTML = `
             <div class="popup-content">
-                <h2>RANKING REGISTRATION</h2>
+                <h2 id="popup-title">RANKING REGISTRATION</h2>
+                <p id="popup-message" style="margin: 0; font-weight: bold; color: #ff00ff;"></p>
                 <input type="text" id="player-name" placeholder="YOUR NAME" maxlength="10">
                 <button id="submit-name">GO!!!</button>
             </div>
@@ -33,9 +34,11 @@ export class UIManager {
         return UIManager.instance;
     }
 
-    public showNamePrompt(): Promise<string | null> {
+    public showNamePrompt(message: string): Promise<string | null> {
         return new Promise((resolve) => {
             this.resolvePromise = resolve;
+            const messageEl = this.overlay.querySelector('#popup-message') as HTMLParagraphElement;
+            messageEl.textContent = message;
             this.overlay.classList.remove('hidden');
             this.input.value = "おじさん";
             setTimeout(() => this.input.focus(), 100);
