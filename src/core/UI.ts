@@ -45,7 +45,7 @@ export class UIManager {
         });
     }
 
-    public showRankingBoard(rankings: any[]): Promise<void> {
+    public showRankingBoard(rankings: any[]): Promise<'retry' | 'title'> {
         return new Promise((resolve) => {
             const rankingOverlay = document.createElement('div');
             rankingOverlay.className = 'ranking-overlay';
@@ -64,16 +64,26 @@ export class UIManager {
                     <div class="ranking-list">
                         ${listHtml}
                     </div>
-                    <button class="back-button">BACK TO TITLE</button>
+                    <div class="ranking-actions">
+                        <button class="retry-button">AGAIN!</button>
+                        <button class="back-button">TITLE</button>
+                    </div>
                 </div>
             `;
 
             document.body.appendChild(rankingOverlay);
 
+            const retryBtn = rankingOverlay.querySelector('.retry-button') as HTMLButtonElement;
             const backBtn = rankingOverlay.querySelector('.back-button') as HTMLButtonElement;
+
+            retryBtn.onclick = () => {
+                document.body.removeChild(rankingOverlay);
+                resolve('retry');
+            };
+
             backBtn.onclick = () => {
                 document.body.removeChild(rankingOverlay);
-                resolve();
+                resolve('title');
             };
         });
     }

@@ -18,7 +18,13 @@ startButton.addEventListener('click', () => {
 rankingButton.addEventListener('click', async () => {
   try {
     const rankings = await getTopRankings();
-    await UIManager.getInstance().showRankingBoard(rankings);
+    const choice = await UIManager.getInstance().showRankingBoard(rankings);
+    if (choice === 'retry') {
+      window.location.href = window.location.pathname + '?retry=true';
+    } else {
+      // Just stay on title or refresh
+      window.location.reload();
+    }
   } catch (error) {
     console.error("Failed to show rankings from title:", error);
   }
@@ -31,3 +37,12 @@ window.addEventListener('resize', () => {
 
 // Initial resize
 game.resize();
+
+// Handle Auto-Retry
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('retry') === 'true') {
+  startScreen.style.display = 'none';
+  // Clear the search param without refreshing
+  window.history.replaceState({}, document.title, window.location.pathname);
+  game.start();
+}

@@ -68,14 +68,22 @@ export class Game {
 
         try {
             const latestRankings = await getTopRankings();
-            await ui.showRankingBoard(latestRankings);
+            const choice = await ui.showRankingBoard(latestRankings);
+
+            if (choice === 'retry') {
+                window.location.href = window.location.pathname + '?retry=true';
+            } else {
+                window.location.reload();
+            }
         } catch (error) {
             console.error("Ranking fetch failed:", error);
-            // Fallback: show empty board if fetch fails completely
-            await ui.showRankingBoard([]);
+            const choice = await ui.showRankingBoard([]);
+            if (choice === 'retry') {
+                window.location.href = window.location.pathname + '?retry=true';
+            } else {
+                window.location.reload();
+            }
         }
-
-        location.reload();
     }
 
     private render() {

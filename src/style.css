@@ -276,19 +276,36 @@ button:focus-visible {
   font-weight: bold;
 }
 
-.ranking-content .back-button {
-  background: #ff00ff;
-  color: white;
+.ranking-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.ranking-content .back-button,
+.ranking-content .retry-button {
+  flex: 1;
   border: none;
   padding: 20px;
   font-size: 20px;
   font-weight: bold;
   cursor: pointer;
-  width: 100%;
-  margin-top: 20px;
   transition: opacity 0.2s;
 }
 
-.ranking-content .back-button:active {
+.ranking-content .retry-button {
+  background: #39ff14;
+  /* Neon Green */
+  color: black;
+}
+
+.ranking-content .back-button {
+  background: #ff00ff;
+  /* Neon Pink */
+  color: white;
+}
+
+.ranking-content .back-button:active,
+.ranking-content .retry-button:active {
   opacity: 0.8;
 }
