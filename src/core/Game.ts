@@ -39,19 +39,33 @@ export class Game {
         });
     }
 
-    private readonly ZOOM_SCALE = 0.4;
+    private dynamicZoom: number = 0.5;
 
     public resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        const dpr = window.devicePixelRatio || 1;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
-        // Pass "Virtual" dimensions to the game entities
-        // If we zoom out (scale < 1), the world needs to be larger to fill the screen
-        const virtualWidth = this.canvas.width / this.ZOOM_SCALE;
-        const virtualHeight = this.canvas.height / this.ZOOM_SCALE;
+        // Dynamic Zoom calculation:
+        // Mobile (portrait, < 600px): ~0.35-0.4
+        // PC (landscape, > 1200px): ~0.6-0.7
+        this.dynamicZoom = Math.max(0.35, Math.min(0.65, width / 1800 + 0.15));
+
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+        this.canvas.style.width = `${width}px`;
+        this.canvas.style.height = `${height}px`;
+
+        // Pass "Virtual" dimensions (Logic space) to entities
+        const virtualWidth = width / this.dynamicZoom;
+        const virtualHeight = height / this.dynamicZoom;
 
         this.player.onResize(virtualWidth, virtualHeight);
         this.world.onResize(virtualWidth, virtualHeight);
+
+        // Standardize context scaling for high DPI
+        this.ctx.resetTransform();
+        this.ctx.scale(dpr, dpr);
     }
 
     public start() {
@@ -105,23 +119,21 @@ export class Game {
     }
 
     private render() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
         this.ctx.fillStyle = '#ffffff';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(0, 0, width, height);
 
         this.ctx.save();
 
         // Apply Global Zoom
-        this.ctx.scale(this.ZOOM_SCALE, this.ZOOM_SCALE);
+        this.ctx.scale(this.dynamicZoom, this.dynamicZoom);
 
-        // Vertical Centering:
-        // Player is roughly at (virtualHeight - 100).
-        // we want this to be at (screenHeight / 2) on screen.
-        // ScreenY = (WorldY + TranslateY) * Zoom
-        // h/2 = (vH - 100 + ty) * Zoom
-        // h/(2*Zoom) = vH - 100 + ty.   (Note: vH = h/Zoom)
-        // h/(2*Zoom) = h/Zoom - 100 + ty
-        // ty = 100 - h/(2*Zoom)
-        const yOffset = 100 - this.canvas.height / (2 * this.ZOOM_SCALE);
+        // Refined Vertical Centering:
+        // We want the primary platform level (mostly around vH - 100 to vH - 300) 
+        // to be clearly visible. Placing the player slightly below center.
+        const yOffset = 200 - height / (2 * this.dynamicZoom);
         this.ctx.translate(0, yOffset);
 
         this.world.render(this.ctx);
@@ -129,10 +141,10 @@ export class Game {
 
         this.ctx.restore();
 
-        this.renderUI();
+        this.renderUI(width);
     }
 
-    private renderUI() {
+    private renderUI(width: number) {
         const score = Math.floor(this.world.getDistance() * 0.01);
         this.ctx.fillStyle = '#000000';
         this.ctx.font = 'bold 36px sans-serif';
@@ -141,7 +153,7 @@ export class Game {
 
         this.ctx.strokeStyle = '#ffffff';
         this.ctx.lineWidth = 4;
-        this.ctx.strokeText(`${score}m`, this.canvas.width - 20, 20);
-        this.ctx.fillText(`${score}m`, this.canvas.width - 20, 20);
+        this.ctx.strokeText(`${score}m`, width - 20, 20);
+        this.ctx.fillText(`${score}m`, width - 20, 20);
     }
 }

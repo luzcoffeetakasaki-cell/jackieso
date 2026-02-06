@@ -30,7 +30,10 @@ body {
   background-color: #ffffff;
   font-family: 'Inter', -apple-system, sans-serif;
   width: 100vw;
+  width: 100dvw;
   height: 100vh;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
 }
 
 canvas {
