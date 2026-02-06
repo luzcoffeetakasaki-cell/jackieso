@@ -24,7 +24,13 @@ export class Player {
         this.jumpSprite.src = '/player_jump.png';
     }
 
-    public onResize(_w: number, _h: number) { }
+    public onResize(_w: number, h: number) {
+        // Initial position: Grounded on the first platform
+        // World.ts sets initial ground at h - 100
+        if (this.y === -200) {
+            this.y = h - 100 - this.height;
+        }
+    }
 
     public jump() {
         if (this.jumpCount < this.maxJumps) {
