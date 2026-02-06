@@ -218,3 +218,77 @@ button:focus-visible {
 .hidden {
   display: none !important;
 }
+
+/* Ranking Board Styles */
+.ranking-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  pointer-events: auto;
+}
+
+.ranking-content {
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.ranking-content h2 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  letter-spacing: 4px;
+}
+
+.ranking-list {
+  margin-bottom: 40px;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 18px;
+}
+
+.ranking-item .rank {
+  font-weight: bold;
+  color: #ff00ff;
+  width: 40px;
+  text-align: left;
+}
+
+.ranking-item .name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.ranking-item .score {
+  font-weight: bold;
+}
+
+.ranking-content .back-button {
+  background: #ff00ff;
+  color: white;
+  border: none;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+  transition: opacity 0.2s;
+}
+
+.ranking-content .back-button:active {
+  opacity: 0.8;
+}

@@ -45,6 +45,39 @@ export class UIManager {
         });
     }
 
+    public showRankingBoard(rankings: any[]): Promise<void> {
+        return new Promise((resolve) => {
+            const rankingOverlay = document.createElement('div');
+            rankingOverlay.className = 'ranking-overlay';
+
+            const listHtml = rankings.map((entry, i) => `
+                <div class="ranking-item">
+                    <span class="rank">${i + 1}</span>
+                    <span class="name">${entry.name}</span>
+                    <span class="score">${entry.score}m</span>
+                </div>
+            `).join('');
+
+            rankingOverlay.innerHTML = `
+                <div class="ranking-content">
+                    <h2>TOP RANKING</h2>
+                    <div class="ranking-list">
+                        ${listHtml}
+                    </div>
+                    <button class="back-button">BACK TO TITLE</button>
+                </div>
+            `;
+
+            document.body.appendChild(rankingOverlay);
+
+            const backBtn = rankingOverlay.querySelector('.back-button') as HTMLButtonElement;
+            backBtn.onclick = () => {
+                document.body.removeChild(rankingOverlay);
+                resolve();
+            };
+        });
+    }
+
     private handleSubmit() {
         const name = this.input.value.trim() || null;
         this.overlay.classList.add('hidden');

@@ -1,6 +1,6 @@
 import { Player } from '../entities/Player';
 import { World } from '../world/World';
-import { submitScore, getTopRankings, type RankingEntry } from './Firebase';
+import { submitScore, getTopRankings } from './Firebase';
 import { UIManager } from './UI';
 
 export class Game {
@@ -9,9 +9,6 @@ export class Game {
     private world: World;
     private lastTime: number = 0;
     private isRunning: boolean = false;
-    private rankings: RankingEntry[] = [];
-    private showRankings: boolean = false;
-
     private canvas: HTMLCanvasElement;
 
     constructor(canvas: HTMLCanvasElement) {
@@ -20,13 +17,6 @@ export class Game {
         this.ctx = canvas.getContext('2d')!;
         this.player = new Player();
         this.world = new World();
-
-        // Load initial rankings
-        this.refreshRankings();
-    }
-
-    private async refreshRankings() {
-        this.rankings = await getTopRankings();
     }
 
     public resize() {
@@ -77,14 +67,12 @@ export class Game {
             await submitScore(playerName, score);
         }
 
-        // Refresh and show final rankings before reload
-        this.rankings = await getTopRankings();
-        this.showRankings = true;
-        this.render();
+        // Refresh and show HTML rankings
+        const latestRankings = await getTopRankings();
+        await ui.showRankingBoard(latestRankings);
 
-        setTimeout(() => {
-            location.reload();
-        }, 5000); // Wait a bit longer to see the rankings
+        // Return to title
+        location.reload();
     }
 
     private render() {
@@ -95,10 +83,6 @@ export class Game {
         this.player.render(this.ctx);
 
         this.renderUI();
-
-        if (this.showRankings) {
-            this.renderRankingOverlay();
-        }
     }
 
     private renderUI() {
@@ -112,28 +96,5 @@ export class Game {
         this.ctx.lineWidth = 4;
         this.ctx.strokeText(`${score}m`, this.canvas.width - 20, 20);
         this.ctx.fillText(`${score}m`, this.canvas.width - 20, 20);
-    }
-
-    private renderRankingOverlay() {
-        const w = this.canvas.width;
-        const h = this.canvas.height;
-
-        // Semi-transparent overlay
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        this.ctx.fillRect(0, 0, w, h);
-
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.font = 'bold 48px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('TOP RANKING', w / 2, 80);
-
-        this.ctx.font = '24px sans-serif';
-        this.rankings.forEach((entry, i) => {
-            const y = 160 + i * 40;
-            this.ctx.textAlign = 'left';
-            this.ctx.fillText(`${i + 1}. ${entry.name}`, w / 2 - 150, y);
-            this.ctx.textAlign = 'right';
-            this.ctx.fillText(`${entry.score}m`, w / 2 + 150, y);
-        });
     }
 }
