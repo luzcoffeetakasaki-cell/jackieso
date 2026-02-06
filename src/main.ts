@@ -1,4 +1,5 @@
 import { Game } from './core/Game';
+import './style.css';
 
 const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 const startButton = document.getElementById('startButton') as HTMLButtonElement;
