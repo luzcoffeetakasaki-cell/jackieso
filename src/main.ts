@@ -13,8 +13,9 @@ const game = new Game(canvas);
 
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
-  SoundManager.getInstance().playBGM();
   game.start();
+  // Play BGM after game starts to prevent blocking if audio fails
+  SoundManager.getInstance().playBGM();
 });
 
 rankingButton.addEventListener('click', async () => {
