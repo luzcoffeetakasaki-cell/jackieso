@@ -14,7 +14,7 @@ export class UIManager {
                 <p id="popup-reason" style="margin: 0; font-weight: bold; color: #ff00ff;"></p>
                 <div id="popup-score" style="font-size: 32px; margin: 15px 0; font-weight: bold; color: #fff;">SCORE: 0m</div>
                 <input type="text" id="player-name" placeholder="YOUR NAME" maxlength="10">
-                <button id="submit-name">送信</button>
+                <button id="submit-name">スコアを送信する！</button>
             </div>
         `;
         document.body.appendChild(this.overlay);
