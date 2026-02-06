@@ -1,6 +1,7 @@
 import { Player } from '../entities/Player';
 import { World } from '../world/World';
 import { submitScore, getTopRankings, type RankingEntry } from './Firebase';
+import { UIManager } from './UI';
 
 export class Game {
     private ctx: CanvasRenderingContext2D;
