@@ -53,6 +53,9 @@ export async function submitScore(name: string, score: number) {
 export async function getTopRankings(count: number = 10): Promise<RankingEntry[]> {
     console.log("getTopRankings start");
     try {
+        // Ensure we are signed in
+        await withTimeout(signInAnonymously(auth), 3000, "Auth");
+
         const q = query(collection(db, "rankings"), orderBy("score", "desc"), limit(count));
         const querySnapshot = await withTimeout(getDocs(q), 4000, "GetDocs");
 

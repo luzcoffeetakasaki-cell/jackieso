@@ -16,6 +16,10 @@ startButton.addEventListener('click', () => {
 });
 
 rankingButton.addEventListener('click', async () => {
+  const originalText = rankingButton.textContent;
+  rankingButton.textContent = "Loading...";
+  rankingButton.disabled = true;
+
   try {
     const rankings = await getTopRankings();
     const choice = await UIManager.getInstance().showRankingBoard(rankings);
@@ -27,6 +31,10 @@ rankingButton.addEventListener('click', async () => {
     }
   } catch (error) {
     console.error("Failed to show rankings from title:", error);
+    alert("ランキングの取得に失敗しました。通信環境を確認してください。");
+  } finally {
+    rankingButton.textContent = originalText;
+    rankingButton.disabled = false;
   }
 });
 
