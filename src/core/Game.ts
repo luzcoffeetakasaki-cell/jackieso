@@ -1,6 +1,6 @@
 import { Player } from '../entities/Player';
 import { World } from '../world/World';
-import { submitScore, getTopRankings } from './Firebase';
+import { submitScore } from './Firebase';
 import { UIManager } from './UI';
 
 export class Game {
@@ -66,23 +66,12 @@ export class Game {
             await submitScore(playerName, score);
         }
 
-        try {
-            const latestRankings = await getTopRankings();
-            const choice = await ui.showRankingBoard(latestRankings);
+        const choice = await ui.showPostGameChoice(score);
 
-            if (choice === 'retry') {
-                window.location.href = window.location.pathname + '?retry=true';
-            } else {
-                window.location.reload();
-            }
-        } catch (error) {
-            console.error("Ranking fetch failed:", error);
-            const choice = await ui.showRankingBoard([]);
-            if (choice === 'retry') {
-                window.location.href = window.location.pathname + '?retry=true';
-            } else {
-                window.location.reload();
-            }
+        if (choice === 'retry') {
+            window.location.href = window.location.pathname + '?retry=true';
+        } else {
+            window.location.reload();
         }
     }
 

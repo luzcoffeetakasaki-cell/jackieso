@@ -91,6 +91,39 @@ export class UIManager {
         });
     }
 
+    public showPostGameChoice(score: number): Promise<'retry' | 'title'> {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'ranking-overlay'; // Reuse ranking style for consistency
+
+            overlay.innerHTML = `
+                <div class="ranking-content">
+                    <h1 style="color: #ff0000; margin-bottom: 10px;">GAME OVER</h1>
+                    <div style="font-size: 48px; margin: 30px 0; font-weight: bold; color: #fff;">SCORE: ${score}m</div>
+                    <div class="ranking-actions">
+                        <button class="retry-button">AGAIN!</button>
+                        <button class="back-button">TITLE</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            const retryBtn = overlay.querySelector('.retry-button') as HTMLButtonElement;
+            const backBtn = overlay.querySelector('.back-button') as HTMLButtonElement;
+
+            retryBtn.onclick = () => {
+                document.body.removeChild(overlay);
+                resolve('retry');
+            };
+
+            backBtn.onclick = () => {
+                document.body.removeChild(overlay);
+                resolve('title');
+            };
+        });
+    }
+
     private handleSubmit() {
         const name = this.input.value.trim() || null;
         this.overlay.classList.add('hidden');
