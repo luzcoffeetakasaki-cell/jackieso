@@ -63,7 +63,8 @@ export class Game {
         const playerName = await ui.showNamePrompt(reason, score);
 
         if (playerName) {
-            await submitScore(playerName, score);
+            // FIRE AND FORGET: Don't await submission to avoid UI lag
+            submitScore(playerName, score).catch(err => console.error("Background submission failed:", err));
         }
 
         const choice = await ui.showPostGameChoice(score);
