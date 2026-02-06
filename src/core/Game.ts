@@ -39,11 +39,19 @@ export class Game {
         });
     }
 
+    private readonly ZOOM_SCALE = 0.4;
+
     public resize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.player.onResize(this.canvas.width, this.canvas.height);
-        this.world.onResize(this.canvas.width, this.canvas.height);
+
+        // Pass "Virtual" dimensions to the game entities
+        // If we zoom out (scale < 1), the world needs to be larger to fill the screen
+        const virtualWidth = this.canvas.width / this.ZOOM_SCALE;
+        const virtualHeight = this.canvas.height / this.ZOOM_SCALE;
+
+        this.player.onResize(virtualWidth, virtualHeight);
+        this.world.onResize(virtualWidth, virtualHeight);
     }
 
     public start() {
@@ -102,18 +110,18 @@ export class Game {
 
         this.ctx.save();
 
-        // Zoom out for better visibility (0.4 scale - Extreme wide view)
-        // Center the scaling or keep it simple? 
-        // Let's scale from (0, height) or just (0,0)? 
-        // Scaling from (0,0) is easiest for coordinate math.
-        const zoom = 0.4;
-        this.ctx.scale(zoom, zoom);
+        // Apply Global Zoom
+        this.ctx.scale(this.ZOOM_SCALE, this.ZOOM_SCALE);
 
-        // Adjust translation so the scene remains at the bottom? 
-        // If we scale by 0.75, we should translate up a bit if we want the bottom to stay bottom.
-        // But since the world is generated based on canvasHeight, maybe just scaling is enough.
-        // Actually, let's translate to keep the bottom aligned.
-        const yOffset = (this.canvas.height * (1 - zoom)) / zoom;
+        // Vertical Centering:
+        // Player is roughly at (virtualHeight - 100).
+        // we want this to be at (screenHeight / 2) on screen.
+        // ScreenY = (WorldY + TranslateY) * Zoom
+        // h/2 = (vH - 100 + ty) * Zoom
+        // h/(2*Zoom) = vH - 100 + ty.   (Note: vH = h/Zoom)
+        // h/(2*Zoom) = h/Zoom - 100 + ty
+        // ty = 100 - h/(2*Zoom)
+        const yOffset = 100 - this.canvas.height / (2 * this.ZOOM_SCALE);
         this.ctx.translate(0, yOffset);
 
         this.world.render(this.ctx);
