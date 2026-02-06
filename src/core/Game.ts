@@ -60,7 +60,7 @@ export class Game {
         const score = Math.floor(this.world.getDistance() * 0.01);
 
         const ui = UIManager.getInstance();
-        const playerName = await ui.showNamePrompt(reason);
+        const playerName = await ui.showNamePrompt(reason, score);
 
         if (playerName) {
             await submitScore(playerName, score);

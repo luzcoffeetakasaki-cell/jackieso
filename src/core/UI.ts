@@ -10,10 +10,11 @@ export class UIManager {
         this.overlay.className = 'popup-overlay hidden';
         this.overlay.innerHTML = `
             <div class="popup-content">
-                <h2 id="popup-title">RANKING REGISTRATION</h2>
-                <p id="popup-message" style="margin: 0; font-weight: bold; color: #ff00ff;"></p>
+                <h1 id="popup-header" style="color: #ff0000; margin-bottom: 10px;">GAME OVER</h1>
+                <p id="popup-reason" style="margin: 0; font-weight: bold; color: #ff00ff;"></p>
+                <div id="popup-score" style="font-size: 32px; margin: 15px 0; font-weight: bold; color: #fff;">SCORE: 0m</div>
                 <input type="text" id="player-name" placeholder="YOUR NAME" maxlength="10">
-                <button id="submit-name">GO!!!</button>
+                <button id="submit-name">送信</button>
             </div>
         `;
         document.body.appendChild(this.overlay);
@@ -34,13 +35,15 @@ export class UIManager {
         return UIManager.instance;
     }
 
-    public showNamePrompt(message: string): Promise<string | null> {
+    public showNamePrompt(reason: string, score: number): Promise<string | null> {
         return new Promise((resolve) => {
             this.resolvePromise = resolve;
-            const messageEl = this.overlay.querySelector('#popup-message') as HTMLParagraphElement;
-            messageEl.textContent = message;
+            const reasonEl = this.overlay.querySelector('#popup-reason') as HTMLParagraphElement;
+            const scoreEl = this.overlay.querySelector('#popup-score') as HTMLDivElement;
+            reasonEl.textContent = reason;
+            scoreEl.textContent = `SCORE: ${score}m`;
             this.overlay.classList.remove('hidden');
-            this.input.value = "おじさん";
+            this.input.value = "ゲスト";
             setTimeout(() => this.input.focus(), 100);
         });
     }
