@@ -1,6 +1,7 @@
 import { Game } from './core/Game';
 import { getTopRankings } from './core/Firebase';
 import { UIManager } from './core/UI';
+import { SoundManager } from './core/SoundManager';
 import './style.css';
 
 const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
@@ -12,6 +13,7 @@ const game = new Game(canvas);
 
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
+  SoundManager.getInstance().playBGM();
   game.start();
 });
 
