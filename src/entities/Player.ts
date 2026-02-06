@@ -11,6 +11,7 @@ export class Player {
 
     private width: number = 80;
     private height: number = 150;
+    private worldHeight: number = 0;
 
     private standSprite: HTMLImageElement;
     private jumpSprite: HTMLImageElement;
@@ -25,6 +26,7 @@ export class Player {
     }
 
     public onResize(_w: number, h: number) {
+        this.worldHeight = h;
         // Initial position: Grounded on the first platform
         // World.ts sets initial ground at h - 100
         if (this.y === -200) {
@@ -64,7 +66,8 @@ export class Player {
             }
         }
 
-        if (this.y > window.innerHeight + 200) return 'FALL';
+        // Use virtual worldHeight for fall check, not physical window height
+        if (this.y > this.worldHeight + 200) return 'FALL';
         return 'ALIVE';
     }
 
