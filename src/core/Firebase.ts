@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { initializeFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBPdGQUfS4RSfMTkkVE0vxhq9HiTnxzSUo",
@@ -12,7 +13,18 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+export const db = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+});
+const auth = getAuth(app);
+
+// Helper for timing out promises
+const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`${label} Timeout`)), ms))
+    ]);
+};
 
 export interface RankingEntry {
     name: string;
@@ -21,28 +33,36 @@ export interface RankingEntry {
 }
 
 export async function submitScore(name: string, score: number) {
+    console.log("submitScore start:", name, score);
     try {
-        await addDoc(collection(db, "rankings"), {
+        // Ensure we are signed in
+        await withTimeout(signInAnonymously(auth), 3000, "Auth");
+        console.log("Auth success");
+
+        const docRef = await withTimeout(addDoc(collection(db, "rankings"), {
             name,
             score,
             timestamp: Date.now()
-        });
+        }), 4000, "AddDoc");
+        console.log("Score written:", docRef.id);
     } catch (e) {
-        console.error("Error adding document: ", e);
+        console.error("submitScore error:", e);
     }
 }
 
 export async function getTopRankings(count: number = 10): Promise<RankingEntry[]> {
+    console.log("getTopRankings start");
     try {
         const q = query(collection(db, "rankings"), orderBy("score", "desc"), limit(count));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await withTimeout(getDocs(q), 4000, "GetDocs");
+
         const rankings: RankingEntry[] = [];
         querySnapshot.forEach((doc) => {
             rankings.push(doc.data() as RankingEntry);
         });
         return rankings;
     } catch (e) {
-        console.error("Error getting documents: ", e);
+        console.error("getTopRankings error:", e);
         return [];
     }
 }
