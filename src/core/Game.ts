@@ -21,6 +21,14 @@ export class Game {
         this.initInput();
     }
 
+    public reset() {
+        console.log('Game resetting');
+        this.player = new Player();
+        this.world = new World();
+        this.resize(); // Ensure world is set up correctly for current screen
+        this.start();
+    }
+
     private initInput() {
         // Pointer down handles both mouse clicks and touch taps on the canvas
         this.canvas.addEventListener('pointerdown', (e) => {
@@ -112,7 +120,7 @@ export class Game {
         const choice = await ui.showPostGameChoice(score);
 
         if (choice === 'retry') {
-            window.location.href = window.location.pathname + '?retry=true';
+            this.reset();
         } else {
             window.location.reload();
         }
