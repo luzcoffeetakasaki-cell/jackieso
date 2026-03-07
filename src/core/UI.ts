@@ -43,7 +43,8 @@ export class UIManager {
             reasonEl.textContent = reason;
             scoreEl.textContent = `SCORE: ${score}m`;
             this.overlay.classList.remove('hidden');
-            this.input.value = "ゲスト";
+            const savedName = localStorage.getItem('player-name') || "ゲスト";
+            this.input.value = savedName;
             setTimeout(() => this.input.focus(), 100);
         });
     }
@@ -127,6 +128,9 @@ export class UIManager {
     private handleSubmit() {
         const name = this.input.value.trim() || null;
         this.overlay.classList.add('hidden');
+        if (name) {
+            localStorage.setItem('player-name', name);
+        }
         if (this.resolvePromise) {
             this.resolvePromise(name);
             this.resolvePromise = null;
