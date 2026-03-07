@@ -263,6 +263,49 @@ button:focus-visible {
   font-size: 18px;
 }
 
+.ranking-item:nth-child(2) .rank {
+  color: #C0C0C0;
+}
+
+.ranking-item:nth-child(3) .rank {
+  color: #CD7F32;
+}
+
+/* Milestone Message */
+.milestone-message {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 64px;
+  font-weight: 900;
+  color: #ffff00;
+  text-shadow: 0 0 20px #ff00ff, 4px 4px 0 #000;
+  pointer-events: none;
+  z-index: 2000;
+  animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.milestone-message.fade-out {
+  opacity: 0;
+  transform: translate(-50%, -100%);
+  transition: all 0.5s ease-in;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 .ranking-item .rank {
   font-weight: bold;
   color: #ff00ff;

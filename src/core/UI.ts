@@ -136,4 +136,18 @@ export class UIManager {
             this.resolvePromise = null;
         }
     }
+
+    public showMessage(text: string, duration: number = 2000) {
+        const msg = document.createElement('div');
+        msg.className = 'milestone-message';
+        msg.textContent = text;
+        document.body.appendChild(msg);
+
+        setTimeout(() => {
+            msg.classList.add('fade-out');
+            setTimeout(() => {
+                if (msg.parentNode) document.body.removeChild(msg);
+            }, 500);
+        }, duration);
+    }
 }

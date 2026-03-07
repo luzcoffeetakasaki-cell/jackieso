@@ -10,6 +10,7 @@ export class Game {
     private lastTime: number = 0;
     private isRunning: boolean = false;
     private canvas: HTMLCanvasElement;
+    private nextMilestone: number = 500; // First milestone at 500m
 
     constructor(canvas: HTMLCanvasElement) {
         console.log('Game initialized');
@@ -95,6 +96,12 @@ export class Game {
         const status = this.player.update(deltaTime, this.world);
         this.world.update(deltaTime);
 
+        const score = Math.floor(this.world.getDistance() * 0.01);
+        if (score >= this.nextMilestone) {
+            UIManager.getInstance().showMessage(`${this.nextMilestone}m 突破！`);
+            this.nextMilestone += (this.nextMilestone < 3000 ? 500 : 1000); // Ramping milestones
+        }
+
         if (status === 'FALL' || status === 'HIT') {
             const message = status === 'FALL' ? '落ちちゃった！' : '激突！';
             this.handleGameOver(message);
@@ -129,8 +136,24 @@ export class Game {
     private render() {
         const width = window.innerWidth;
         const height = window.innerHeight;
+        const score = Math.floor(this.world.getDistance() * 0.01);
 
-        this.ctx.fillStyle = '#ffffff';
+        // Dynamic Background Color
+        // 0m: Sky Blue (#87CEEB)
+        // 1000m: Sunset Orange (#FF4500)
+        // 3000m+: Deep Night (#191970)
+        let bgColor = '#87CEEB';
+        if (score < 1000) {
+            const t = score / 1000;
+            bgColor = this.lerpColor('#87CEEB', '#FF4500', t);
+        } else if (score < 3000) {
+            const t = (score - 1000) / 2000;
+            bgColor = this.lerpColor('#FF4500', '#191970', t);
+        } else {
+            bgColor = '#191970';
+        }
+
+        this.ctx.fillStyle = bgColor;
         this.ctx.fillRect(0, 0, width, height);
 
         this.ctx.save();
@@ -138,9 +161,7 @@ export class Game {
         // Apply Global Zoom
         this.ctx.scale(this.dynamicZoom, this.dynamicZoom);
 
-        // Refined Vertical Centering:
-        // We want the primary platform level (mostly around vH - 100 to vH - 300) 
-        // to be clearly visible. Placing the player slightly below center.
+        // Refined Vertical Centering
         const yOffset = 200 - height / (2 * this.dynamicZoom);
         this.ctx.translate(0, yOffset);
 
@@ -150,6 +171,18 @@ export class Game {
         this.ctx.restore();
 
         this.renderUI(width);
+    }
+
+    private lerpColor(a: string, b: string, amount: number): string {
+        const ah = parseInt(a.replace(/#/g, ''), 16),
+            ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+            bh = parseInt(b.replace(/#/g, ''), 16),
+            br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+            rr = ar + amount * (br - ar),
+            rg = ag + amount * (bg - ag),
+            rb = ab + amount * (bb - ab);
+
+        return '#' + ((1 << 24) + (Math.round(rr) << 16) + (Math.round(rg) << 8) + Math.round(rb)).toString(16).slice(1);
     }
 
     private renderUI(width: number) {
