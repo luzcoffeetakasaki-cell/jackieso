@@ -9,13 +9,13 @@
 
 ## 3. 技術スタック
 - **Frontend**: Vite + TypeScript + Vanilla CSS
-- **Backend**: Firebase (Auth, Firestore)
+- **Backend**: Firebase (Auth, Firestore + Security Rules)
 - **State Management**: localStorage (名前の永続化用)
 
 ## 4. MVP（最小構成）の定義
 - [x] 自転車の操作と障害物の回避
 - [x] スコア（走行距離）のカウント
-- [x] Firebaseを使用したグローバルランキング
+- [x] Firebaseを使用したグローバルランキング（セキュリティルール適用済み）
 - [ ] ランキング名の永続化（localStorage）
 - [ ] **[NEW]** 動的な難易度上昇システム（序盤は優しく、徐々に困難に）
 - [ ] **[NEW]** 足場生成の安全性担保（理論上届かない穴をなくす）

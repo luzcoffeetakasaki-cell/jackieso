@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rankings/{rankingId} {
+      // 誰でもランキングを閲覧できる
+      allow read: if true;
+      
+      // 認証済みユーザー（匿名含む）なら新規登録できる
+      // データの型と妥当性を検証
+      allow create: if request.auth != null 
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 20
+                    && request.resource.data.score is number
+                    && request.resource.data.timestamp is int;
+      
+      // 不正な操作を防ぐため、更新や削除は禁止
+      allow update, delete: if false;
+    }
+  }
+}
